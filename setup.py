@@ -1,12 +1,13 @@
 """Setup script for sietch"""
+
 from setuptools import setup, find_packages
 
-with open('README.md', 'r', encoding='utf-8') as f:
+with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
 
 setup(
-    name = 'sietch',
-    verison = '0.1.0',
+    name="sietch",
+    version="0.1.0",
     author="GandalfsDad",
     description="Lightweight environment & cli tool",
     long_description=long_description,
@@ -17,14 +18,10 @@ setup(
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
     ],
-    python_requires=">=3.9", 
+    python_requires=">=3.8",
     install_requires=[
-        'click',
+        "click",
     ],
     packages=find_packages(),
-    entry_points={
-        'console_scripts':[
-            'sietch=sietch.cli.main:cli'
-        ]
-    }
+    entry_points={"console_scripts": ["sietch=sietch.cli.main:cli"]},
 )
