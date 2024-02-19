@@ -1,7 +1,8 @@
 """Environment creation functions"""
 
 import subprocess
-from os.path import join
+import shutil
+import os
 
 from ..directory import get_environment_dir
 
@@ -29,7 +30,8 @@ def remove_environment(environment_name: str) -> None:
     """
     environment_path = get_environment_dir(environment_name)
 
-    subprocess.run(["rm", "-rf", environment_path], check=True)
+    if os.path.exists(environment_path):
+        shutil.rmtree(environment_path)
 
 
 def prepare_activate_environment(environment_name: str) -> None:
@@ -42,6 +44,14 @@ def prepare_activate_environment(environment_name: str) -> None:
     """
 
     environment_path = get_environment_dir(environment_name)
-    activate_path = join(environment_path, "bin", "activate")
 
-    return subprocess.run(f"echo 'source {activate_path}'", check=True, shell=True)
+    # Windows
+    if os.name == "nt":
+        activate_path = os.path.join(environment_path, "Scripts", "activate")
+        command = f"{activate_path}"
+    # Unix/Linux/Mac
+    else:
+        activate_path = os.path.join(environment_path, "bin", "activate")
+        command = f"source {activate_path}"
+
+    return subprocess.run(f"echo '{command}'", check=True, shell=True)
