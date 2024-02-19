@@ -4,6 +4,8 @@ on:
         branches:
             - develop
             - main
+permissions:
+    contents: write
 
 jobs:
     build-develop:
@@ -35,6 +37,8 @@ jobs:
         runs-on: ubuntu-latest
         environment: production
         if: github.ref == 'refs/heads/main'
+        outputs:
+          version: ${{ steps.get_release_name.outputs.version }}
         steps:
             - uses: actions/checkout@v4
             - name: Set up Python 3.8
@@ -48,8 +52,26 @@ jobs:
             - name: Build and publish
               run: |
                   python -m build .
-            - name: Publish to PyPI Test
+            - name: Publish to PyPI
               uses: pypa/gh-action-pypi-publish@release/v1
               with:
                 password: ${{ secrets.PYPI_TOKEN }}
+            - name: Get release Name
+              id: get_release_name
+              run: |
+                  echo "version=$(python setup.py --version)" >> $GITHUB_OUTPUT
+            - name: Tag commit
+              run: |
+                git tag ${{ steps.get_release_name.outputs.version }}
+                git push origin ${{ steps.get_release_name.outputs.version }}
+            - name: Create Release
+              uses: softprops/action-gh-release@v1
+              with:
+                files: dist/*
+                token: ${{ secrets.GITHUB_TOKEN }}
+                generate_release_notes: true
+                tag_name: ${{ steps.get_release_name.outputs.version }}
+                release_name: ${{ steps.get_release_name.outputs.version }}
+             env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             
