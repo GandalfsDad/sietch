@@ -19,7 +19,13 @@ def cli():
 @cli.command("create")
 @p.name
 def create(name: str):
-    """Create a new environment"""
+    """Create a new environment
+
+    Parameters
+    ----------
+    name : str
+        The name of the environment to create
+    """
     click.echo(f"Creating environment {name}")
     create_environment(name)
 
@@ -27,7 +33,13 @@ def create(name: str):
 @cli.command("remove")
 @p.name
 def remove(name: str):
-    """Delete an environment"""
+    """Remove an environment
+
+    Parameters
+    ----------
+    name : str
+        The name of the environment to remove
+    """
     remove_environment(name)
 
 
@@ -47,7 +59,14 @@ def list_():
 @cli.command("activate")
 @p.name
 def activate(name: str):
-    """Activate an environment"""
+    """Activate an environment.
+    NOTE: Does not actually activate the environment, but provides the command to do so.
+
+    Parameters
+    ----------
+    name : str
+        The name of the environment to activate
+    """
 
     click.echo("Run the following command to activate the environment:")
     prepare_activate_environment(name)
