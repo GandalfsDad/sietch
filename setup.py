@@ -7,7 +7,7 @@ with open("README.md", "r", encoding="utf-8") as f:
 
 setup(
     name="sietch",
-    version="0.1.0",
+    version="0.2.0dev0",
     author="GandalfsDad",
     description="Lightweight environment & cli tool",
     long_description=long_description,
