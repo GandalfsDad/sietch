@@ -57,7 +57,7 @@ jobs:
           generate_release_notes: true
           prerelease: true
           tag_name: ${{ steps.get_release_name.outputs.version }}
-          release_name: ${{ steps.get_release_name.outputs.version }}
+          name: ${{ steps.get_release_name.outputs.version }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
@@ -106,7 +106,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           generate_release_notes: true
           tag_name: ${{ steps.get_release_name.outputs.version }}
-          release_name: ${{ steps.get_release_name.outputs.version }}
+          name: ${{ steps.get_release_name.outputs.version }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             
