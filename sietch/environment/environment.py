@@ -4,6 +4,8 @@ import subprocess
 import shutil
 import os
 
+import click
+
 from ..directory import get_environment_dir
 
 
@@ -47,11 +49,16 @@ def prepare_activate_environment(environment_name: str) -> None:
 
     # Windows
     if os.name == "nt":
-        activate_path = os.path.join(environment_path, "Scripts", "activate")
-        command = f"{activate_path}"
+        activate_path = os.path.join(environment_path, "Scripts")
+        command_cmd = f"{os.path.join(activate_path, 'activate')}"
+        command_powershell = f"cd {activate_path} \n ,\activate"
+        click.echo("Run the correct command for your shell")
+        click.echo(f"Command for cmd:\n\t {command_cmd}")
+        click.echo(f"Command for powershell (requires navigation):\n\t {command_powershell}")
+
     # Unix/Linux/Mac
     else:
         activate_path = os.path.join(environment_path, "bin", "activate")
         command = f"source {activate_path}"
 
-    return subprocess.run(f"echo '{command}'", check=True, shell=True)
+        return subprocess.run(f"echo '{command}'", check=True, shell=True)
