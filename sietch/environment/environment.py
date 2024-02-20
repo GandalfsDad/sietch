@@ -48,7 +48,7 @@ def prepare_activate_environment(environment_name: str) -> None:
     # Windows
     if os.name == "nt":
         activate_path = os.path.join(environment_path, "Scripts")
-        command_cmd = f"{os.path.join(activate_path, "activate")}"
+        command_cmd = f"{os.path.join(activate_path, 'activate')}"
         command_powershell = f"cd {activate_path} \n ,\activate"
         click.echo("Run the correct command for your shell")
         click.echo(f"Command for cmd:\n\t {command_cmd}")
