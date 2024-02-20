@@ -14,6 +14,7 @@ jobs:
     if: github.ref != 'refs/heads/main'
     outputs:
       version: ${{ steps.get_release_name.outputs.version }}
+      tag_exists: ${{ steps.get_release_name.outputs.tag_exists }}
     steps:
       - uses: actions/checkout@v4
 
@@ -35,22 +36,32 @@ jobs:
         if: github.ref != 'refs/heads/main'
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          skip_existing: true
-          repository_url: https://test.pypi.org/legacy/
+          skip-existing: true
+          repository-url: https://test.pypi.org/legacy/
           password: ${{ secrets.PYPI_TEST_TOKEN }}
 
       - name: Get release Name
         id: get_release_name
         run: |
+          git fetch --tags
           echo "version=$(python setup.py --version)-test" >> $GITHUB_OUTPUT
-
+          if git rev-parse "$(python setup.py --version)-test" >/dev/null 2>&1; then
+            echo "tag_exists=true" >> $GITHUB_OUTPUT
+            echo "The tag exists"
+          else
+            echo "tag_exists=false" >> $GITHUB_OUTPUT
+            echo "The tag does not exist"
+          fi
+          
       - name: Tag commit
+        if: ${{ steps.get_release_name.outputs.tag_exists == 'false' }}
         run: |
           git tag ${{ steps.get_release_name.outputs.version }}
           git push origin ${{ steps.get_release_name.outputs.version }}
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
+        if: ${{ steps.get_release_name.outputs.tag_exists == 'false' }}
         with:
           files: ./dist/*.whl
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -92,15 +103,22 @@ jobs:
       - name: Get release Name
         id: get_release_name
         run: |
-            echo "version=$(python setup.py --version)" >> $GITHUB_OUTPUT
+          echo "version=$(python setup.py --version)" >> $GITHUB_OUTPUT
+          if git rev-parse "$(python setup.py --version)" >/dev/null 2>&1; then
+            echo "tag_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "tag_exists=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Tag commit
+        if: ${{ steps.get_release_name.outputs.tag_exists == 'false' }} 
         run: |
           git tag ${{ steps.get_release_name.outputs.version }}
           git push origin ${{ steps.get_release_name.outputs.version }}
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
+        if: ${{ steps.get_release_name.outputs.tag_exists == 'false' }}
         with:
           files: ./dist/*.whl
           token: ${{ secrets.GITHUB_TOKEN }}
