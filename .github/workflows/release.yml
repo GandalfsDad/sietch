@@ -4,6 +4,7 @@ on:
     branches:
       - develop
       - main
+      - working/*
 permissions:
   contents: write
 
